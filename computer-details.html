@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电脑产品详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 100px;
+            background-color: #000000;
+        }
+        
+        h1 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        h1 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .back-button {
+            display: inline-block;
+            background-color: #0071e3;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            margin-bottom: 40px;
+        }
+        
+        .back-button:hover {
+            background-color: #0077ed;
+        }
+        
+        /* 视频播放器样式 */
+        .video-container {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto 30px;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            cursor: pointer;
+        }
+        
+        .video-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .video-container:hover {
+            transform: translateY(0) scale(1.01);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .video-player {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16/9;
+        }
+        
+        /* 视频错误提示样式 */
+        .video-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 16px;
+            display: none;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>电脑产品详情</h1>
+        <a href="index.html" class="back-button">返回首页</a>
+        
+        <!-- 视频播放卡片 - 视频 1 -->
+        <div class="video-container" data-category="电脑" data-id="1">
+            <video class="video-player" loop muted playsinline>
+                <source src="视频/电脑/1/video.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频播放
+            </video>
+            <div class="video-error">视频加载失败</div>
+        </div>
+        
+        <!-- 视频播放卡片 - 视频 2 -->
+        <div class="video-container" data-category="电脑" data-id="2">
+            <video class="video-player" loop muted playsinline>
+                <source src="视频/电脑/2/video.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频播放
+            </video>
+            <div class="video-error">视频加载失败</div>
+        </div>
+        
+        <!-- 视频播放卡片 - 视频 3 -->
+        <div class="video-container" data-category="电脑" data-id="3">
+            <video class="video-player" loop muted playsinline>
+                <source src="视频/电脑/3/video.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频播放
+            </video>
+            <div class="video-error">视频加载失败</div>
+        </div>
+        
+        <!-- 视频播放卡片 - 视频 4 -->
+        <div class="video-container" data-category="电脑" data-id="4">
+            <video class="video-player" loop muted playsinline>
+                <source src="视频/电脑/4/video.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频播放
+            </video>
+            <div class="video-error">视频加载失败</div>
+        </div>
+        
+        <!-- 视频播放卡片 - 视频 5 -->
+        <div class="video-container" data-category="电脑" data-id="5">
+            <video class="video-player" loop muted playsinline>
+                <source src="视频/电脑/5/video.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频播放
+            </video>
+            <div class="video-error">视频加载失败</div>
+        </div>
+    </div>
+    
+    <script>
+        // 获取所有视频元素和错误提示元素
+        const videoContainers = document.querySelectorAll('.video-container');
+        const videos = document.querySelectorAll('.video-player');
+        const videoErrors = document.querySelectorAll('.video-error');
+        
+        // 当前正在播放的视频索引
+        let currentPlayingIndex = -1;
+        
+        // 创建Intersection Observer来检测视频容器是否可见
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const container = entry.target;
+                const index = Array.from(videoContainers).indexOf(container);
+                
+                if (entry.isIntersecting) {
+                    // 当视频容器进入视口时，显示它
+                    container.classList.add('visible');
+                    
+                    // 检查当前是否有其他视频正在播放，如果有则暂停
+                    if (currentPlayingIndex !== -1 && currentPlayingIndex !== index) {
+                        videos[currentPlayingIndex].pause();
+                    }
+                    
+                    // 尝试播放当前视频
+                    const video = videos[index];
+                    try {
+                        video.play();
+                        currentPlayingIndex = index;
+                    } catch (error) {
+                        console.log(`视频 ${index + 1} 自动播放被阻止，这是浏览器的安全限制`);
+                    }
+                } else {
+                    // 当视频容器离开视口时，隐藏它并暂停视频
+                    container.classList.remove('visible');
+                    
+                    const video = videos[index];
+                    if (!video.paused && currentPlayingIndex === index) {
+                        video.pause();
+                        currentPlayingIndex = -1;
+                    }
+                }
+            });
+        }, {
+            threshold: 0.5, // 当视频容器50%可见时触发
+            rootMargin: '100px' // 扩大检测范围100px，实现预加载效果
+        });
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为每个视频容器添加观察
+            videoContainers.forEach(container => {
+                observer.observe(container);
+                
+                // 添加点击事件，跳转到对应3D文件夹里的1.html页面
+                    container.addEventListener('click', function() {
+                        const category = this.getAttribute('data-category');
+                        const id = this.getAttribute('data-id');
+                        // 根据实际文件结构，跳转到对应的1.html文件
+                        window.location.href = `3D/${category}/${id}/1.html`;
+                    });
+            });
+            
+            // 设置视频错误处理
+            videos.forEach((video, index) => {
+                // 视频加载失败时显示错误提示
+                video.onerror = function() {
+                    console.error(`视频 ${index + 1} 加载失败`);
+                    // 显示错误提示
+                    if (videoErrors[index]) {
+                        videoErrors[index].style.display = 'flex';
+                    }
+                };
+            });
+        });
+        
+        // 页面卸载时清理
+        window.addEventListener('beforeunload', function() {
+            observer.disconnect();
+        });
+    </script>
+</body>
+</html>

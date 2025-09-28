@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人作品集</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+            background-color: #ffffff;
+            color: #1d1d1f;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 头部导航栏 - 苹果风格 */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            transition: background-color 0.3s ease;
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+        }
+        
+        .navbar-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+        
+        .navbar-link:hover {
+            opacity: 1;
+        }
+        
+        /* 头部样式 */
+        header {
+            padding: 100px 20px 60px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 56px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            color: #1d1d1f;
+        }
+        
+        .subtitle {
+            font-size: 28px;
+            color: #86868b;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+        
+        /* 主内容区域 */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 产品展示区域 - 苹果风格单列展示 */
+        .product-showcase {
+            margin-bottom: 100px;
+        }
+        
+        .product-item {
+            margin-bottom: 100px;
+            position: relative;
+        }
+        
+        .product-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .product-name {
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            color: #1d1d1f;
+        }
+        
+        .product-description {
+            font-size: 20px;
+            color: #86868b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 苹果风格图片轮播 */
+        .image-carousel {
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
+        }
+        
+        .carousel-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            max-height: 700px;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .carousel-slide:hover .carousel-image {
+            transform: scale(1.02);
+        }
+        
+
+        
+        /* 轮播指示器 */
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(134, 134, 139, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background-color: rgba(134, 134, 139, 1);
+            transform: scale(1.2);
+        }
+        
+        /* 特性列表 */
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #0071e3;
+        }
+        
+        .feature-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #1d1d1f;
+        }
+        
+        .feature-description {
+            font-size: 16px;
+            color: #86868b;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 8px 20px;
+            font-size: 17px;
+            font-weight: 400;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .btn-primary {
+            background-color: #0071e3;
+            color: #ffffff;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0077ed;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #0071e3;
+            border: 1px solid #0071e3;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 113, 227, 0.1);
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 30px;
+        }
+        
+
+        
+        /* 加载动画 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* 淡入动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 48px;
+            }
+            
+            .subtitle {
+                font-size: 24px;
+            }
+            
+            .product-name {
+                font-size: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-content {
+                height: 48px;
+            }
+            
+            h1 {
+                font-size: 36px;
+            }
+            
+            .subtitle {
+                font-size: 20px;
+            }
+            
+            .product-name {
+                font-size: 32px;
+            }
+            
+            .product-description {
+                font-size: 18px;
+            }
+            
+            .carousel-image {
+                max-height: 500px;
+            }
+            
+            .features-list {
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 80px 15px 40px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .product-name {
+                font-size: 28px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+                text-align: center;
+                margin: 5px 0;
+            }
+            
+            .carousel-control {
+                opacity: 0.5 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="navbar-link">首页</a>
+            <a href="#computers" class="navbar-link">电脑</a>
+            <a href="#vacuums" class="navbar-link">家电</a>
+            <a href="#cups" class="navbar-link">恒温杯</a>
+            <a href="video-pages.html" class="navbar-link">视频页面</a>
+            <a href="#" class="navbar-link">关于我</a>
+        </div>
+    </nav>
+    
+    <!-- 头部 -->
+    <header>
+        <h1>创意作品集</h1>
+        <p class="subtitle">探索我的设计理念与创新作品</p>
+    </header>
+    
+    <!-- 主内容区域 -->
+    <div class="container">
+        <!-- 产品展示区域 -->
+        <div class="product-showcase">
+            <!-- 电脑产品 -->
+            <section id="computers" class="product-item">
+                <div class="product-header">
+                    <h2 class="product-name">电脑</h2>
+                    <p class="product-description">融合科技与美学的设计理念，打造极致体验</p>
+                </div>
+                
+                <!-- 图片轮播 -->
+                <div class="image-carousel" data-category="电脑">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img class="carousel-image" src="页面照片/电脑照片/1.jpg" alt="电脑设计" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-dots"></div>
+                </div>
+                
+
+            </section>
+            
+            <!-- 家电产品 -->
+            <section id="vacuums" class="product-item">
+                <div class="product-header">
+                    <h2 class="product-name">家电</h2>
+                    <p class="product-description">高效清洁，智能设计，为您创造洁净空间</p>
+                </div>
+                
+                <!-- 图片轮播 -->
+                <div class="image-carousel" data-category="家电">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img class="carousel-image" src="页面照片/家电照片/placeholder.jpg" alt="家电设计" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZjhmOCIvPjxwYXRoIGQ9Ik0xNSAxMHY4MGMwIDUuNTIgNC40OCAxMCAxMCAxMGg2MGM1LjUyIDAgMTAtNC40OCAxMC0xMHYtODBtLTIwIDIwaDIwTTMwIDYwaDIwTTMwIDQwaDIwIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=='">
+                        </div>
+                    </div>
+                    <div class="carousel-dots"></div>
+                </div>
+                
+
+            </section>
+            
+            <!-- 恒温杯产品 -->
+            <section id="cups" class="product-item">
+                <div class="product-header">
+                    <h2 class="product-name">恒温杯</h2>
+                    <p class="product-description">智能控温，让您随时享用适宜温度的饮品</p>
+                </div>
+                
+                <!-- 图片轮播 -->
+                <div class="image-carousel" data-category="恒温杯">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img class="carousel-image" src="页面照片/恒温杯照片/placeholder.jpg" alt="恒温杯设计" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZjhmOCIvPjxwYXRoIGQ9Ik0xNSAxMHY4MGMwIDUuNTIgNC40OCAxMCAxMCAxMGg2MGM1LjUyIDAgMTAtNC40OCAxMC0xMHYtODBtLTIwIDIwaDIwTTMwIDYwaDIwTTMwIDQwaDIwIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=='">
+                        </div>
+                    </div>
+                    <div class="carousel-dots"></div>
+                </div>
+                
+
+            </section>
+        </div>
+    </div>
+    
+
+    
+    <script>
+        // DOM元素
+        const navbar = document.querySelector('.navbar');
+        
+        
+        
+        // 页面滚动效果
+        window.addEventListener('scroll', function() {
+            // 导航栏背景变化
+            if (window.scrollY > 20) {
+                navbar.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+            } else {
+                navbar.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 60, // 导航栏高度
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 图片扩展名数组
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+        
+        // 检查文件是否为图片
+        function isImageFile(filename) {
+            const lowerFilename = filename.toLowerCase();
+            return imageExtensions.some(ext => lowerFilename.endsWith(ext));
+        }
+        
+        // 自动加载指定文件夹中的图片
+        async function loadImagesForCategory(category, track) {
+            // 清空现有轨道内容
+            track.innerHTML = '';
+            
+            // 确定图片文件夹路径
+            let folderPath;
+            switch(category) {
+                case '电脑':
+                    folderPath = '页面照片/电脑照片/';
+                    break;
+                case '家电':
+                    folderPath = '页面照片/家电照片/';
+                    break;
+                case '恒温杯':
+                    folderPath = '页面照片/恒温杯照片/';
+                    break;
+                default:
+                    folderPath = '';
+            }
+            
+            if (!folderPath) return;
+            
+            try {
+                // 这里使用简化的方法，尝试加载数字命名的图片（1.jpg, 2.jpg等）
+                // 在真实环境中，这应该由服务器端实现
+                const maxImagesToTry = 10; // 最多尝试加载10张图片
+                let loadedImagesCount = 0;
+                
+                for (let i = 1; i <= maxImagesToTry; i++) {
+                    // 尝试不同的扩展名
+                    for (const ext of imageExtensions) {
+                        const imageUrl = `${folderPath}${i}${ext}`;
+                        
+                        // 使用Image对象测试图片是否存在
+                        const img = new Image();
+                        
+                        await new Promise((resolve) => {
+                            img.onload = () => {
+                                // 图片加载成功，添加到轮播
+                                const slide = document.createElement('div');
+                                slide.className = 'carousel-slide';
+                                
+                                const imgElement = document.createElement('img');
+                                imgElement.className = 'carousel-image';
+                                imgElement.src = imageUrl;
+                                imgElement.alt = `${category}设计${i}`;
+                                imgElement.loading = 'lazy';
+                                
+                                slide.appendChild(imgElement);
+                                track.appendChild(slide);
+                                loadedImagesCount++;
+                                resolve();
+                            };
+                            
+                            img.onerror = () => resolve(); // 图片不存在，继续下一个
+                            
+                            img.src = imageUrl;
+                        });
+                    }
+                }
+                
+                // 如果没有加载到图片，使用占位图
+                if (loadedImagesCount === 0) {
+                    const slide = document.createElement('div');
+                    slide.className = 'carousel-slide';
+                    
+                    const imgElement = document.createElement('img');
+                    imgElement.className = 'carousel-image';
+                    imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZjhmOCIvPjxwYXRoIGQ9Ik0xNSAxMHY4MGMwIDUuNTIgNC40OCAxMCAxMCAxMGg2MGM1LjUyIDAgMTAtNC40OCAxMC0xMHYtODBtLTIwIDIwaDIwTTMwIDYwaDIwTTMwIDQwaDIwIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==';
+                    imgElement.alt = `${category}设计`;
+                    
+                    slide.appendChild(imgElement);
+                    track.appendChild(slide);
+                }
+            } catch (error) {
+                console.error(`加载${category}图片时出错:`, error);
+            }
+        }
+        
+        // 初始化图片轮播
+        async function initCarousels() {
+            const carousels = document.querySelectorAll('.image-carousel');
+            
+            for (const carousel of carousels) {
+                const track = carousel.querySelector('.carousel-track');
+                const dots = carousel.querySelector('.carousel-dots');
+                const category = carousel.getAttribute('data-category');
+                
+                // 自动加载该类别的图片
+                await loadImagesForCategory(category, track);
+                
+                const slides = carousel.querySelectorAll('.carousel-slide');
+                let currentIndex = 0;
+                
+                // 清空并创建新的指示器
+                dots.innerHTML = '';
+                slides.forEach((_, index) => {
+                    const dot = document.createElement('span');
+                    dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => goToSlide(index));
+                    dots.appendChild(dot);
+                });
+                
+                // 切换到指定幻灯片
+                function goToSlide(index) {
+                    currentIndex = index;
+                    const slideWidth = slides[0].offsetWidth;
+                    track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+                    
+                    // 更新指示器
+                    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+                }
+                
+                // 点击图片跳转到详情页面
+                slides.forEach(slide => {
+                    const image = slide.querySelector('.carousel-image');
+                    image.style.cursor = 'pointer';
+                    image.addEventListener('click', () => {
+                        switch(category) {
+                            case '电脑':
+                                window.location.href = 'computer-details.html';
+                                break;
+                            case '家电':
+                                window.location.href = 'vacuum-details.html';
+                                break;
+                            case '恒温杯':
+                                window.location.href = 'cup-details.html';
+                                break;
+                        }
+                    });
+                });
+                
+                // 窗口大小改变时更新轮播
+                window.addEventListener('resize', () => {
+                    goToSlide(currentIndex);
+                });
+            }
+        }
+        
+
+        
+        // 图片加载效果
+        document.querySelectorAll('img').forEach(img => {
+            // 初始透明度设为0
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.5s ease';
+            
+            // 图片加载完成后淡入
+            img.onload = function() {
+                this.style.opacity = '1';
+            };
+            
+            // 图片加载失败时显示占位图
+            img.onerror = function() {
+                this.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZjhmOCIvPjxwYXRoIGQ9Ik0xNSAxMHY4MGMwIDUuNTIgNC40OCAxMCAxMCAxMGg2MGM1LjUyIDAgMTAtNC40OCAxMC0xMHYtODBtLTIwIDIwaDIwTTMwIDYwaDIwTTMwIDQwaDIwIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==';
+                this.style.opacity = '1';
+            };
+            
+            // 如果图片已经在缓存中
+            if (img.complete) {
+                img.style.opacity = '1';
+            }
+        });
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initCarousels();
+            
+            // 为所有产品项目添加淡入动画
+            const productItems = document.querySelectorAll('.product-item');
+            productItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(30px)';
+                    item.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                    
+                    // 使用Intersection Observer来检测元素是否可见
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.style.opacity = '1';
+                                entry.target.style.transform = 'translateY(0)';
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, {
+                        threshold: 0.1
+                    });
+                    
+                    observer.observe(item);
+                }, 100 * index);
+            });
+        });
+        
+        // 添加定时刷新功能，定期检查新图片
+        setInterval(async function() {
+            const carousels = document.querySelectorAll('.image-carousel');
+            for (const carousel of carousels) {
+                const track = carousel.querySelector('.carousel-track');
+                const category = carousel.getAttribute('data-category');
+                await loadImagesForCategory(category, track);
+                // 重新初始化轮播以显示新加载的图片
+                await initCarousels();
+            }
+        }, 30000); // 每30秒检查一次新图片
+        
+        // 添加拖放功能，让用户可以直接拖放图片到页面上
+        document.addEventListener('dragover', function(event) {
+            event.preventDefault();
+        });
+        
+        document.addEventListener('drop', function(event) {
+            event.preventDefault();
+            
+            if (event.dataTransfer.files.length > 0) {
+                // 在实际应用中，这里可以处理拖放的文件
+                // 但由于浏览器安全限制，JavaScript无法直接保存文件到本地文件系统
+                alert('拖放功能需要后端支持才能保存图片到文件夹。请手动将图片复制到对应的文件夹中。');
+            }
+        });
+    </script>
+</body>
+</html>
