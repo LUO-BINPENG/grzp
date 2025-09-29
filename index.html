@@ -499,46 +499,41 @@
             if (!folderPath) return;
             
             try {
-                // 这里使用简化的方法，尝试加载数字命名的图片（1.jpg, 2.jpg等）
-                // 在真实环境中，这应该由服务器端实现
-                const maxImagesToTry = 10; // 最多尝试加载10张图片
+                // 使用预先定义的图片列表，避免不必要的404请求
+                // 这种方式比尝试加载多个不存在的图片更高效
+                const predefinedImages = {
+                    '电脑': ['1.jpg', '2.svg'],
+                    '家电': ['1.jpg'],
+                    '恒温杯': ['1.jpg']
+                };
+                
+                const images = predefinedImages[category] || [];
                 let loadedImagesCount = 0;
                 
-                for (let i = 1; i <= maxImagesToTry; i++) {
-                    // 尝试不同的扩展名
-                    for (const ext of imageExtensions) {
-                        const imageUrl = `${folderPath}${i}${ext}`;
+                if (images.length > 0) {
+                    for (const imgName of images) {
+                        const imageUrl = `${folderPath}${imgName}`;
                         
-                        // 使用Image对象测试图片是否存在
-                        const img = new Image();
+                        const slide = document.createElement('div');
+                        slide.className = 'carousel-slide';
                         
-                        await new Promise((resolve) => {
-                            img.onload = () => {
-                                // 图片加载成功，添加到轮播
-                                const slide = document.createElement('div');
-                                slide.className = 'carousel-slide';
-                                
-                                const imgElement = document.createElement('img');
-                                imgElement.className = 'carousel-image';
-                                imgElement.src = imageUrl;
-                                imgElement.alt = `${category}设计${i}`;
-                                imgElement.loading = 'lazy';
-                                
-                                slide.appendChild(imgElement);
-                                track.appendChild(slide);
-                                loadedImagesCount++;
-                                resolve();
-                            };
-                            
-                            img.onerror = () => resolve(); // 图片不存在，继续下一个
-                            
-                            img.src = imageUrl;
-                        });
+                        const imgElement = document.createElement('img');
+                        imgElement.className = 'carousel-image';
+                        imgElement.src = imageUrl;
+                        imgElement.alt = `${category}设计${loadedImagesCount + 1}`;
+                        imgElement.loading = 'lazy';
+                        
+                        // 添加错误处理
+                        imgElement.onerror = function() {
+                            this.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y4ZjhmOCIvPjxwYXRoIGQ9Ik0xNSAxMHY4MGMwIDUuNTIgNC40OCAxMCAxMCAxMGg2MGM1LjUyIDAgMTAtNC40OCAxMC0xMHYtODBtLTIwIDIwaDIwTTMwIDYwaDIwTTMwIDQwaDIwIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==';
+                        };
+                        
+                        slide.appendChild(imgElement);
+                        track.appendChild(slide);
+                        loadedImagesCount++;
                     }
-                }
-                
-                // 如果没有加载到图片，使用占位图
-                if (loadedImagesCount === 0) {
+                } else {
+                    // 如果没有预定义图片，使用占位图
                     const slide = document.createElement('div');
                     slide.className = 'carousel-slide';
                     
@@ -672,17 +667,7 @@
             });
         });
         
-        // 添加定时刷新功能，定期检查新图片
-        setInterval(async function() {
-            const carousels = document.querySelectorAll('.image-carousel');
-            for (const carousel of carousels) {
-                const track = carousel.querySelector('.carousel-track');
-                const category = carousel.getAttribute('data-category');
-                await loadImagesForCategory(category, track);
-                // 重新初始化轮播以显示新加载的图片
-                await initCarousels();
-            }
-        }, 30000); // 每30秒检查一次新图片
+
         
         // 添加拖放功能，让用户可以直接拖放图片到页面上
         document.addEventListener('dragover', function(event) {
