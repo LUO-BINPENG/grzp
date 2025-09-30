@@ -22,14 +22,21 @@
             width: 100%;
             margin: 0 auto;
             padding: 20px;
-            padding-top: 100px;
         }
 
-        h1 {
+        .title-banner {
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            position: relative;
+            z-index: 100;
+        }
+
+        .title-banner h1 {
             font-size: 36px;
             font-weight: 600;
-            margin-bottom: 40px;
-            text-align: center;
+            margin: 0;
         }
 
         .back-button {
@@ -114,8 +121,10 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="title-banner">
         <h1>电脑产品详情</h1>
+    </div>
+    <div class="container">
         <a href="index.html" class="back-button">返回首页</a>
         
         <!-- 视频播放卡片 - 视频 1 -->
@@ -159,166 +168,6 @@
         </div>
     </div>
     
-    <script>
-        // 获取所有视频容器
-        const videoContainers = document.querySelectorAll('.video-container');
-        
-        // 视频加载状态缓存
-        const videoLoadStates = {};
-        
-        // 当前正在播放的视频引用
-        let currentlyPlayingVideo = null;
-        
-        // 性能优化：防抖函数
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-        
-        // 尝试播放视频并处理自动播放限制
-        function tryPlayVideo(video, videoContainer) {
-            // 检查是否有其他视频正在播放，如果有则暂停
-            if (currentlyPlayingVideo && currentlyPlayingVideo !== video && !currentlyPlayingVideo.paused) {
-                currentlyPlayingVideo.pause();
-            }
-            
-            // 尝试播放视频
-            video.play().then(() => {
-                currentlyPlayingVideo = video;
-                // 隐藏错误信息
-                const errorMessage = videoContainer.querySelector('.video-error');
-                if (errorMessage) {
-                    errorMessage.style.display = 'none';
-                }
-            }).catch(error => {
-                console.log('无法播放视频:', error);
-                // 显示错误信息
-                const errorMessage = videoContainer.querySelector('.video-error');
-                if (errorMessage) {
-                    errorMessage.style.display = 'block';
-                }
-            });
-        }
-        
-        // 优化Intersection Observer配置
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const videoContainer = entry.target;
-                const video = videoContainer.querySelector('video');
-                const videoId = videoContainer.getAttribute('data-id');
-                
-                if (entry.isIntersecting) {
-                    // 视频进入视口
-                    if (!videoLoadStates[videoId]) {
-                        // 首次加载视频
-                        const videoPath = video.getAttribute('data-src');
-                        video.src = videoPath;
-                        videoLoadStates[videoId] = 'loading';
-                        
-                        // 视频加载完成后的处理
-                        video.onloadeddata = function() {
-                            videoLoadStates[videoId] = 'loaded';
-                            videoContainer.classList.add('video-loaded');
-                            
-                            // 自动播放视频（如果浏览器允许）
-                            if (video.paused) {
-                                tryPlayVideo(video, videoContainer);
-                            }
-                        };
-                        
-                        // 视频加载失败的处理
-                        video.onerror = function() {
-                            videoLoadStates[videoId] = 'error';
-                            const errorMessage = videoContainer.querySelector('.video-error');
-                            if (errorMessage) {
-                                errorMessage.style.display = 'block';
-                            }
-                            console.error('视频加载失败:', videoPath);
-                        };
-                    } else if (videoLoadStates[videoId] === 'loaded' && video.paused) {
-                        // 视频已加载但暂停，尝试播放
-                        tryPlayVideo(video, videoContainer);
-                    }
-                } else {
-                    // 当视频离开视口时，暂停播放以节省资源
-                    if (video && !video.paused) {
-                        video.pause();
-                        if (currentlyPlayingVideo === video) {
-                            currentlyPlayingVideo = null;
-                        }
-                    }
-                }
-            });
-        }, {
-            threshold: 0.2, // 降低阈值到20%，减少不必要的触发
-            rootMargin: '100px', // 调整预加载范围
-            trackVisibility: true, // 启用可见性追踪
-            delay: 100 // 添加延迟以减少触发频率
-        });
-        
-        // 批量添加事件监听器
-        function initEventListeners() {
-            // 观察所有视频容器
-            videoContainers.forEach(container => {
-                observer.observe(container);
-            });
-            
-            // 为每个视频容器添加点击事件，用于手动触发播放
-            videoContainers.forEach(container => {
-                const video = container.querySelector('video');
-                container.addEventListener('click', debounce(function() {
-                    if (video.paused) {
-                        tryPlayVideo(video, container);
-                    }
-                }, 50));
-                
-                // 点击每个视频显示提示
-                container.addEventListener('dblclick', function() {
-                    // 显示友好提示，避免不必要的网络请求
-                    alert('3D演示功能正在开发中，敬请期待！');
-                });
-            });
-        }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 预加载关键CSS
-            const criticalStyles = document.createElement('style');
-            criticalStyles.textContent = `
-                .video-container { will-change: opacity, transform; }
-                .video-container video { will-change: opacity, transform; }
-            `;
-            document.head.appendChild(criticalStyles);
-            
-            // 初始化事件监听器
-            initEventListeners();
-        });
-        
-        // 页面卸载时清理资源
-        window.addEventListener('beforeunload', function() {
-            observer.disconnect();
-            // 释放视频资源
-            videoContainers.forEach(container => {
-                const video = container.querySelector('video');
-                if (video) {
-                    video.pause();
-                    video.src = '';
-                }
-            });
-            currentlyPlayingVideo = null;
-        });
-        
-        // 窗口大小改变时的优化
-        window.addEventListener('resize', debounce(function() {
-            // 可以在这里添加与窗口大小变化相关的优化
-        }, 100));
-    </script>
+    <script src="script-product-details.js"></script>
 </body>
 </html>

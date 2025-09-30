@@ -214,6 +214,7 @@
             <a href="#computers" class="navbar-link">电脑</a>
             <a href="#vacuums" class="navbar-link">家电</a>
             <a href="#cups" class="navbar-link">恒温杯</a>
+            <a href="3D/computer/1/1.html" class="navbar-link">3D模型</a>
             <a href="video-pages.html" class="navbar-link">视频页面</a>
             <a href="#" class="navbar-link">关于我</a>
         </div>
@@ -221,8 +222,8 @@
     
     <!-- 头部 -->
     <header>
-        <h1>创意作品集</h1>
-        <p class="subtitle">探索我的设计理念与创新作品</p>
+        <h1>使用说明</h1>
+        <p class="subtitle">点照片看视频点视频看3D模型</p>
     </header>
     
     <!-- 主内容区域 -->
@@ -361,9 +362,9 @@
             
             if (!folderPath) return;
             
-            // 使用预先定义的图片列表，避免不必要的404请求
+            // 只使用一张图片
             const predefinedImages = {
-                '电脑': ['1.jpg', '2.svg'],
+                '电脑': ['1.jpg'],
                 '家电': ['1.jpg'],
                 '恒温杯': ['1.jpg']
             };
@@ -434,50 +435,25 @@
                 const slides = carousel.querySelectorAll('.carousel-slide');
                 let currentIndex = 0;
                 
-                // 清空并创建新的指示器
-                dots.innerHTML = '';
-                slides.forEach((_, index) => {
-                    const dot = document.createElement('span');
-                    dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
-                    dot.addEventListener('click', () => goToSlide(index));
-                    dots.appendChild(dot);
-                });
-                
-                // 切换到指定幻灯片
-                function goToSlide(index) {
-                    currentIndex = index;
-                    const slideWidth = slides[0].offsetWidth;
-                    track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-                    
-                    // 更新指示器
-                    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-                        dot.classList.toggle('active', i === currentIndex);
-                    });
-                }
+                // 隐藏轮播指示器（因为只有一张图片）
+                dots.style.display = 'none';
                 
                 // 点击图片跳转到详情页面
-                slides.forEach(slide => {
-                    const image = slide.querySelector('.carousel-image');
-                    image.style.cursor = 'pointer';
-                    image.addEventListener('click', () => {
-                        switch(category) {
-                            case '电脑':
-                                window.location.href = 'computer-details.html';
-                                break;
-                            case '家电':
-                                window.location.href = 'vacuum-details.html';
-                                break;
-                            case '恒温杯':
-                                window.location.href = 'cup-details.html';
-                                break;
-                        }
-                    });
+                const image = slides[0].querySelector('.carousel-image');
+                image.style.cursor = 'pointer';
+                image.addEventListener('click', () => {
+                    switch(category) {
+                        case '电脑':
+                            window.location.href = 'computer-details.html';
+                            break;
+                        case '家电':
+                            window.location.href = 'vacuum-details.html';
+                            break;
+                        case '恒温杯':
+                            window.location.href = 'cup-details.html';
+                            break;
+                    }
                 });
-                
-                // 窗口大小改变时更新轮播 - 防抖优化
-                window.addEventListener('resize', debounce(() => {
-                    goToSlide(currentIndex);
-                }, 100));
             }
         }
         
