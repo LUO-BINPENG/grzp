@@ -16,6 +16,8 @@
             background-color: #000000;
             color: #ffffff;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
@@ -81,6 +83,7 @@
             height: auto;
             display: block;
             aspect-ratio: 16/9;
+            background-color: #000;
         }
 
         .video-container.visible {
@@ -104,6 +107,32 @@
             display: none;
         }
 
+        /* 视频封面图样式 */
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .video-placeholder svg {
+            width: 100px;
+            height: 100px;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container:hover .video-placeholder svg {
+            opacity: 0.8;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             h1 {
@@ -111,7 +140,7 @@
             }
             
             .container {
-                padding-top: 80px;
+                padding-top: 20px;
             }
             
             .video-container {
@@ -129,7 +158,10 @@
         
         <!-- 视频播放卡片 - 视频 1 -->
         <div class="video-container" data-category="恒温杯" data-id="1" data-src="视频/恒温杯/1/video.mp4">
-            <video class="video-player" loop muted playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23111'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23333'/%3E%3Cpolygon points='40,40 60,50 40,60' fill='%23666'/%3E%3C/svg%3E">
+            <div class="video-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#111"/><circle cx="50" cy="50" r="20" fill="#333"/><polygon points="40,40 60,50 40,60" fill="#666"/></svg>
+            </div>
+            <video class="video-player" loop muted playsinline preload="none">
                 您的浏览器不支持HTML5视频播放
             </video>
             <div class="video-error">视频加载失败</div>
@@ -137,7 +169,10 @@
         
         <!-- 视频播放卡片 - 视频 2 -->
         <div class="video-container" data-category="恒温杯" data-id="2" data-src="视频/恒温杯/2/video.mp4">
-            <video class="video-player" loop muted playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23111'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23333'/%3E%3Cpolygon points='40,40 60,50 40,60' fill='%23666'/%3E%3C/svg%3E">
+            <div class="video-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#111"/><circle cx="50" cy="50" r="20" fill="#333"/><polygon points="40,40 60,50 40,60" fill="#666"/></svg>
+            </div>
+            <video class="video-player" loop muted playsinline preload="none">
                 您的浏览器不支持HTML5视频播放
             </video>
             <div class="video-error">视频加载失败</div>
@@ -145,7 +180,10 @@
         
         <!-- 视频播放卡片 - 视频 3 -->
         <div class="video-container" data-category="恒温杯" data-id="3" data-src="视频/恒温杯/3/video.mp4">
-            <video class="video-player" loop muted playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23111'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23333'/%3E%3Cpolygon points='40,40 60,50 40,60' fill='%23666'/%3E%3C/svg%3E">
+            <div class="video-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#111"/><circle cx="50" cy="50" r="20" fill="#333"/><polygon points="40,40 60,50 40,60" fill="#666"/></svg>
+            </div>
+            <video class="video-player" loop muted playsinline preload="none">
                 您的浏览器不支持HTML5视频播放
             </video>
             <div class="video-error">视频加载失败</div>
@@ -153,7 +191,10 @@
         
         <!-- 视频播放卡片 - 视频 4 -->
         <div class="video-container" data-category="恒温杯" data-id="4" data-src="视频/恒温杯/4/video.mp4">
-            <video class="video-player" loop muted playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23111'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23333'/%3E%3Cpolygon points='40,40 60,50 40,60' fill='%23666'/%3E%3C/svg%3E">
+            <div class="video-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#111"/><circle cx="50" cy="50" r="20" fill="#333"/><polygon points="40,40 60,50 40,60" fill="#666"/></svg>
+            </div>
+            <video class="video-player" loop muted playsinline preload="none">
                 您的浏览器不支持HTML5视频播放
             </video>
             <div class="video-error">视频加载失败</div>
@@ -161,7 +202,10 @@
         
         <!-- 视频播放卡片 - 视频 5 -->
         <div class="video-container" data-category="恒温杯" data-id="5" data-src="视频/恒温杯/5/video.mp4">
-            <video class="video-player" loop muted playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23111'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23333'/%3E%3Cpolygon points='40,40 60,50 40,60' fill='%23666'/%3E%3C/svg%3E">
+            <div class="video-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#111"/><circle cx="50" cy="50" r="20" fill="#333"/><polygon points="40,40 60,50 40,60" fill="#666"/></svg>
+            </div>
+            <video class="video-player" loop muted playsinline preload="none">
                 您的浏览器不支持HTML5视频播放
             </video>
             <div class="video-error">视频加载失败</div>
@@ -169,5 +213,15 @@
     </div>
     
     <script src="script-product-details.js"></script>
+    <script>
+        // 性能优化：页面加载完成后触发动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 触发CSS动画
+            const titleBanner = document.querySelector('.title-banner');
+            setTimeout(() => {
+                titleBanner.style.opacity = '1';
+            }, 10);
+        });
+    </script>
 </body>
 </html>
