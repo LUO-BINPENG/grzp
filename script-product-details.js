@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 获取所有视频容器
     const videoContainers = document.querySelectorAll('.video-container');
     
-    // 性能优化：增加并发加载视频数量，提高初始加载效率
-    const MAX_CONCURRENT_LOADS = 3;
+    // 核心性能优化：降低并发加载数量，避免过多资源竞争
+    const MAX_CONCURRENT_LOADS = 1;
     
     // 视频加载状态缓存
     const videoLoadStates = new Map();
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 当前正在加载的视频数量
     let activeLoadCount = 0;
     
-    // 节流函数，避免频繁触发，调整等待时间
+    // 节流函数优化
     function throttle(func, wait) {
         let timeout = null;
         let previous = 0;
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadNextVideoFromQueue();
     }
     
-    // 初始化视频函数
+    // 初始化视频函数 - 大幅优化
     function initVideo(video, container, index) {
         const containerId = container.getAttribute('data-id');
         const videoSrc = container.getAttribute('data-src');
@@ -82,43 +82,18 @@ document.addEventListener('DOMContentLoaded', function() {
         video.loop = true;
         video.playsInline = true;
         video.autoplay = false; // 不自动播放
+        video.preload = 'metadata'; // 只预加载元数据，大幅减少初始加载量
         
         // 视频加载完成后显示容器
-        video.onloadeddata = function() {
+        video.onloadedmetadata = function() {
             // 只在开发环境下输出日志
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                console.log('视频 ' + (index + 1) + ' 加载完成');
+                console.log('视频 ' + (index + 1) + ' 元数据加载完成');
             }
             videoLoadStates.set(containerId, 'loaded');
             container.classList.add('visible');
             
-            // 自动尝试播放视频，但减少延迟
-            setTimeout(() => {
-                try {
-                    video.play().then(() => {
-                        // 只在开发环境下输出日志
-                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                            console.log('视频 ' + (index + 1) + ' 自动播放成功');
-                        }
-                        // 隐藏占位符
-                        const placeholder = container.querySelector('.video-placeholder');
-                        if (placeholder) {
-                            placeholder.style.display = 'none';
-                        }
-                    }).catch(error => {
-                        // 只在开发环境下输出日志
-                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                            console.log('视频 ' + (index + 1) + ' 自动播放被阻止:', error);
-                        }
-                    });
-                } catch (error) {
-                    // 只在开发环境下输出错误
-                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                        console.error('视频 ' + (index + 1) + ' 播放异常:', error);
-                    }
-                }
-            }, 50);
-            
+            // 完全移除自动播放尝试，减少不必要的资源消耗
             onVideoLoadComplete();
         };
         
@@ -189,19 +164,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 暂停视频并释放不可见的视频资源
+    // 暂停视频并释放不可见的视频资源 - 增强版
     function pauseAndReleaseVideo(video) {
         if (!video.paused) {
             video.pause();
         }
         
-        // 对于不可见的视频，如果已经加载完成，可以考虑释放资源
-        // 注意：这里我们不释放资源，因为如果用户再次滚动回来，需要重新加载
-        // 如果视频文件很大，可以考虑在这里设置video.src = ''来释放资源
+        // 对于不可见的视频，释放资源以减少内存占用
+        // 只保留元数据，需要时会重新加载内容
+        if (video.src) {
+            const src = video.src;
+            video.src = '';
+            // 只在开发环境下输出日志
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log('释放视频资源');
+            }
+        }
     }
     
     // 初始化IntersectionObserver来实现懒加载和按需播放
-    // 优化配置：增加rootMargin以提前加载，降低throttle延迟以提高响应速度
+    // 优化配置：大幅提升性能
     const observer = new IntersectionObserver(
         throttle((entries) => {
             entries.forEach(entry => {
@@ -209,11 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const video = container.querySelector('.video-player');
                 const index = Array.from(videoContainers).indexOf(container);
                 const containerId = container.getAttribute('data-id');
-                
-                // 只在开发环境下输出日志
-                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                    console.log(`视频${index+1} 可见性变化: ${entry.isIntersecting ? '进入视口' : '离开视口'}`);
-                }
                 
                 if (entry.isIntersecting) {
                     // 元素进入视口
@@ -226,17 +203,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         pendingVideos.push({ video, container, index });
                         loadNextVideoFromQueue();
-                    } else {
-                        // 视频已加载，尝试播放
-                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                            console.log(`视频${index+1} 已加载，尝试播放`);
-                        }
-                        playVideo(video);
                     }
                 } else {
                     // 元素离开视口
                     if (currentPlayingVideo === video) {
-                        console.log(`视频${index+1} 离开视口，暂停播放`);
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log(`视频${index+1} 离开视口，暂停播放并释放资源`);
+                        }
                         pauseAndReleaseVideo(video);
                         currentPlayingVideo = null;
                     }
@@ -247,25 +220,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-        }, 50), // 降低节流时间，提高响应速度
+        }, 100), // 增加节流时间，减少不必要的处理
         {
             root: null, // 使用视口
-            rootMargin: '100px 0px', // 增加提前触发距离，改善用户体验
-            threshold: 0.05 // 当5%的元素可见时触发
+            rootMargin: '200px 0px', // 增加提前触发距离
+            threshold: 0.1 // 当10%的元素可见时触发
         }
     );
     
     // 为每个视频容器添加点击事件和观察器
     videoContainers.forEach((container, index) => {
-        // 添加点击跳转到3D模型页面
+        // 添加点击事件处理
         container.addEventListener('click', function() {
             const category = this.getAttribute('data-category');
             const id = this.getAttribute('data-id');
-            // 只在开发环境下输出日志
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                console.log('点击容器，跳转到 3D/' + category + '/' + id + '/1.html');
+            const video = this.querySelector('.video-player');
+            
+            // 如果视频未播放，先尝试播放；如果已播放，则跳转到3D模型
+            if (video.paused || currentPlayingVideo !== video) {
+                playVideo(video);
+            } else {
+                // 跳转到3D模型页面
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('点击容器，跳转到 3D/' + category + '/' + id + '/1.html');
+                }
+                window.location.href = `3D/${category}/${id}/1.html`;
             }
-            window.location.href = `3D/${category}/${id}/1.html`;
         });
         
         // 添加到观察器中
