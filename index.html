@@ -322,9 +322,9 @@
                 });
             };
             
-            // 图片预加载队列管理器
+            // 图片预加载队列管理器 - 优化版本
             const ImagePreloader = {
-                maxConcurrent: 2,
+                maxConcurrent: 3, // 增加并发加载数量
                 activeRequests: 0,
                 queue: [],
                 
@@ -508,9 +508,9 @@
                 });
             }
             
-            // 性能监控
+            // 性能监控 - 仅在开发环境启用
             function setupPerformanceMonitoring() {
-                if ('performance' in window) {
+                if ('performance' in window && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
                     window.addEventListener('load', function() {
                         setTimeout(function() {
                             const perfData = window.performance.getEntriesByType('navigation')[0];
@@ -535,7 +535,10 @@
                 // 设置性能监控
                 setupPerformanceMonitoring();
                 
-                console.log('页面性能优化已应用');
+                // 仅在开发环境输出日志
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log('页面性能优化已应用');
+                }
             });
             
             // 页面卸载时清理资源

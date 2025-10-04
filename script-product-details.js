@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 获取所有视频容器
     const videoContainers = document.querySelectorAll('.video-container');
     
-    // 性能优化：限制同时加载的视频数量
-    const MAX_CONCURRENT_LOADS = 2;
+    // 性能优化：增加并发加载视频数量，提高初始加载效率
+    const MAX_CONCURRENT_LOADS = 3;
     
     // 视频加载状态缓存
     const videoLoadStates = new Map();
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 当前正在加载的视频数量
     let activeLoadCount = 0;
     
-    // 节流函数，避免频繁触发
+    // 节流函数，避免频繁触发，调整等待时间
     function throttle(func, wait) {
         let timeout = null;
         let previous = 0;
@@ -71,7 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        console.log('懒加载视频 ' + (index + 1) + '，路径: ' + videoSrc);
+        // 只在开发环境下输出日志
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('懒加载视频 ' + (index + 1) + '，路径: ' + videoSrc);
+        }
         
         // 设置视频源
         video.src = videoSrc;
@@ -82,34 +85,49 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 视频加载完成后显示容器
         video.onloadeddata = function() {
-            console.log('视频 ' + (index + 1) + ' 加载完成');
+            // 只在开发环境下输出日志
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log('视频 ' + (index + 1) + ' 加载完成');
+            }
             videoLoadStates.set(containerId, 'loaded');
             container.classList.add('visible');
             
-            // 自动尝试播放视频
+            // 自动尝试播放视频，但减少延迟
             setTimeout(() => {
                 try {
                     video.play().then(() => {
-                        console.log('视频 ' + (index + 1) + ' 自动播放成功');
+                        // 只在开发环境下输出日志
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log('视频 ' + (index + 1) + ' 自动播放成功');
+                        }
                         // 隐藏占位符
                         const placeholder = container.querySelector('.video-placeholder');
                         if (placeholder) {
                             placeholder.style.display = 'none';
                         }
                     }).catch(error => {
-                        console.log('视频 ' + (index + 1) + ' 自动播放被阻止:', error);
+                        // 只在开发环境下输出日志
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log('视频 ' + (index + 1) + ' 自动播放被阻止:', error);
+                        }
                     });
                 } catch (error) {
-                    console.error('视频 ' + (index + 1) + ' 播放异常:', error);
+                    // 只在开发环境下输出错误
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.error('视频 ' + (index + 1) + ' 播放异常:', error);
+                    }
                 }
-            }, 100);
+            }, 50);
             
             onVideoLoadComplete();
         };
         
         // 视频加载失败处理
         video.onerror = function(e) {
-            console.error('视频 ' + (index + 1) + ' 加载失败:', e);
+            // 只在开发环境下输出错误
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.error('视频 ' + (index + 1) + ' 加载失败:', e);
+            }
             videoLoadStates.set(containerId, 'error');
             const videoError = container.querySelector('.video-error');
             if (videoError) {
@@ -122,12 +140,15 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             video.load();
         } catch (error) {
-            console.error('视频加载异常:', error);
+            // 只在开发环境下输出错误
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.error('视频加载异常:', error);
+            }
             onVideoLoadComplete();
         }
     }
     
-    // 播放视频函数
+    // 播放视频函数 - 优化性能
     function playVideo(video) {
         // 如果已经有视频在播放，则暂停
         if (currentPlayingVideo && currentPlayingVideo !== video) {
@@ -144,17 +165,26 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 video.play().then(() => {
                     currentPlayingVideo = video;
-                    console.log('视频播放成功');
+                    // 只在开发环境下输出日志
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.log('视频播放成功');
+                    }
                     // 隐藏占位符
                     const placeholder = video.parentElement.querySelector('.video-placeholder');
                     if (placeholder) {
                         placeholder.style.display = 'none';
                     }
                 }).catch(error => {
-                    console.log('视频自动播放被阻止，需要用户交互:', error);
+                    // 只在开发环境下输出日志
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.log('视频自动播放被阻止，需要用户交互:', error);
+                    }
                 });
             } catch (error) {
-                console.error('视频播放错误:', error);
+                // 只在开发环境下输出错误
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.error('视频播放错误:', error);
+                }
             }
         }
     }
@@ -171,6 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // 初始化IntersectionObserver来实现懒加载和按需播放
+    // 优化配置：增加rootMargin以提前加载，降低throttle延迟以提高响应速度
     const observer = new IntersectionObserver(
         throttle((entries) => {
             entries.forEach(entry => {
@@ -179,7 +210,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const index = Array.from(videoContainers).indexOf(container);
                 const containerId = container.getAttribute('data-id');
                 
-                console.log(`视频${index+1} 可见性变化: ${entry.isIntersecting ? '进入视口' : '离开视口'}`);
+                // 只在开发环境下输出日志
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    console.log(`视频${index+1} 可见性变化: ${entry.isIntersecting ? '进入视口' : '离开视口'}`);
+                }
                 
                 if (entry.isIntersecting) {
                     // 元素进入视口
@@ -187,12 +221,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (!videoLoadStates.has(containerId) || videoLoadStates.get(containerId) !== 'loaded') {
                         // 如果视频尚未加载，加入加载队列
-                        console.log(`视频${index+1} 开始加载`);
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log(`视频${index+1} 开始加载`);
+                        }
                         pendingVideos.push({ video, container, index });
                         loadNextVideoFromQueue();
                     } else {
                         // 视频已加载，尝试播放
-                        console.log(`视频${index+1} 已加载，尝试播放`);
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log(`视频${index+1} 已加载，尝试播放`);
+                        }
                         playVideo(video);
                     }
                 } else {
@@ -209,11 +247,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-        }, 100),
+        }, 50), // 降低节流时间，提高响应速度
         {
             root: null, // 使用视口
-            rootMargin: '50px 0px', // 提前50px触发（减少距离以提高响应速度）
-            threshold: 0.05 // 当5%的元素可见时触发（降低阈值以提高响应速度）
+            rootMargin: '100px 0px', // 增加提前触发距离，改善用户体验
+            threshold: 0.05 // 当5%的元素可见时触发
         }
     );
     
@@ -223,7 +261,10 @@ document.addEventListener('DOMContentLoaded', function() {
         container.addEventListener('click', function() {
             const category = this.getAttribute('data-category');
             const id = this.getAttribute('data-id');
-            console.log('点击容器，跳转到 3D/' + category + '/' + id + '/1.html');
+            // 只在开发环境下输出日志
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log('点击容器，跳转到 3D/' + category + '/' + id + '/1.html');
+            }
             window.location.href = `3D/${category}/${id}/1.html`;
         });
         
@@ -250,5 +291,8 @@ document.addEventListener('DOMContentLoaded', function() {
         activeLoadCount = 0;
     });
     
-    console.log('页面性能优化已应用，共检测到 ' + videoContainers.length + ' 个视频容器');
+    // 只在开发环境下输出日志
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('页面性能优化已应用，共检测到 ' + videoContainers.length + ' 个视频容器');
+    }
 });
